@@ -3,6 +3,7 @@ package app;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
 
+import app.marchingcubes.Extractor;
 import engine.*;
 import engine.graphics.Camera;
 import engine.graphics.Mesh;
@@ -10,6 +11,10 @@ import engine.graphics.Texture;
 import org.joml.Intersectionf;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.system.CallbackI;
+
+import java.io.File;
+import java.net.URL;
 
 public class App implements Logic {
 
@@ -35,128 +40,21 @@ public class App implements Logic {
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
-        // Create the Mesh
-        float[] positions = new float[] {
-                // V0
-                -0.5f, 0.5f, 0.5f,
-                // V1
-                -0.5f, -0.5f, 0.5f,
-                // V2
-                0.5f, -0.5f, 0.5f,
-                // V3
-                0.5f, 0.5f, 0.5f,
-                // V4
-                -0.5f, 0.5f, -0.5f,
-                // V5
-                0.5f, 0.5f, -0.5f,
-                // V6
-                -0.5f, -0.5f, -0.5f,
-                // V7
-                0.5f, -0.5f, -0.5f,
 
-                // For text coords in top face
-                // V8: V4 repeated
-                -0.5f, 0.5f, -0.5f,
-                // V9: V5 repeated
-                0.5f, 0.5f, -0.5f,
-                // V10: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V11: V3 repeated
-                0.5f, 0.5f, 0.5f,
+        URL fileName = getClass().getClassLoader().getResource("rawData/fuel.raw");
+        File rawData = new File(fileName.toURI());
+        File outputFile = File.createTempFile("fuel", ".obj");
 
-                // For text coords in right face
-                // V12: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // V13: V2 repeated
-                0.5f, -0.5f, 0.5f,
+        Extractor.extractHandlerChar(rawData, outputFile, new int[]{64, 64, 64}, new float[]{1, 1, 1}, (char)50, 12);
 
-                // For text coords in left face
-                // V14: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V15: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-
-                // For text coords in bottom face
-                // V16: V6 repeated
-                -0.5f, -0.5f, -0.5f,
-                // V17: V7 repeated
-                0.5f, -0.5f, -0.5f,
-                // V18: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // V19: V2 repeated
-                0.5f, -0.5f, 0.5f,
-        };
-        float[] textCoords = new float[]{
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-
-                0.0f, 0.0f,
-                0.5f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-
-                // For text coords in top face
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 1.0f,
-                0.5f, 1.0f,
-
-                // For text coords in right face
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-
-                // For text coords in left face
-                0.5f, 0.0f,
-                0.5f, 0.5f,
-
-                // For text coords in bottom face
-                0.5f, 0.0f,
-                1.0f, 0.0f,
-                0.5f, 0.5f,
-                1.0f, 0.5f,
-        };
-        int[] indices = new int[]{
-                // Front face
-                0, 1, 3, 3, 1, 2,
-                // Top Face
-                8, 10, 11, 9, 8, 11,
-                // Right face
-                12, 13, 7, 5, 12, 7,
-                // Left face
-                14, 15, 6, 4, 14, 6,
-                // Bottom face
-                16, 18, 19, 17, 16, 19,
-                // Back face
-                4, 6, 7, 5, 4, 7,};
-
-      //  mesh = new Mesh(positions, textCoords, indices, texture);
-
-      /*  Item box = new Item(mesh);
-        box.setScale(0.25f);
-        box.setPosition(0, 0, -1);
-
-        Item box1 = new Item(mesh);
-        box1.setScale(0.25f);
-        box1.setPosition(0.5f, 0, -1);
-
-        Item box2 = new Item(mesh);
-        box2.setScale(0.25f);
-        box2.setPosition(1f, 0, -1);
-
-        items = new Item[3];
-        items[0] = box;
-        items[1] = box1;
-        items[2] = box2;
-*/
-        Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
+        Mesh mesh = OBJLoader.loadMesh(OBJLoader.getListString(outputFile));
         Texture texture = new Texture("textures/texture.png");
-        mesh.setTexture(texture);
-        mesh.setColour(new Vector3f(1f, 0.5f, 1f));
+
+        mesh.setColour(new Vector3f(0f, 0f, 0f));
         Item item = new Item(mesh);
         item.setScale(0.5f);
         item.setPosition(0, 0, -2);
+        item.setRotation(90, 0f, 0);
         items = new Item[]{item};
 
 

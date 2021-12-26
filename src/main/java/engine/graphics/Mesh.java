@@ -138,24 +138,20 @@ public class Mesh {
     }
 
     public void render() {
-        glActiveTexture(GL_TEXTURE0);
+        if (texture != null) {
+            // Activate firs texture bank
+            glActiveTexture(GL_TEXTURE0);
+            // Bind the texture
+            glBindTexture(GL_TEXTURE_2D, texture.getId());
+        }
 
+        // Draw the mesh
         glBindVertexArray(getVaoId());
-        glBindTexture(GL_TEXTURE_2D, texture.getId());
-        glBindVertexArray(getVaoId());
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-
 
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
 
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
+        // Restore state
         glBindVertexArray(0);
-
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

@@ -3,13 +3,23 @@ package engine;
 import engine.graphics.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.lwjgl.system.CallbackI;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OBJLoader {
-    public static Mesh loadMesh(String fileName) throws Exception {
-        List<String> lines = Utils.readAllLines(fileName);
+
+    public static List<String> getListString(String fileName) throws Exception {
+        return Utils.readAllLines(fileName);
+    }
+
+    public static List<String> getListString(File file) throws Exception {
+        return Utils.readAllLines(file);
+    }
+    public static Mesh loadMesh(List<String> lines) throws Exception {
+
 
         List<Vector3f> vertices = new ArrayList<>();
         List<Vector2f> textures = new ArrayList<>();
